@@ -6,8 +6,8 @@ class Cookie
     /**
      * Cookie constructor
      * 
-     * @param ?string $name
-     * @param ?string $value
+     * @param string $name
+     * @param string $value
      * @param int $expires
      * @param string $path
      * @param string $domain
@@ -15,8 +15,8 @@ class Cookie
      * @param bool $httpOnly
      */
     public function __construct(
-        protected ?string $name = null,
-        protected ?string $value = null,
+        protected string $name,
+        protected string $value,
         protected int $expires = 0,
         protected string $path = '',
         protected string $domain = '',
@@ -35,15 +35,13 @@ class Cookie
     /**
      * Set cookie
      * 
-     * @param ?string $name
-     * @param ?string $value
      * @return void
      */
-    public function set(?string $name = null, ?string $value = null): void
+    public function set(): void
     {
         setcookie(
-            $name ?: $this->name,
-            $value ?: $this->value,
+            $this->name,
+            $this->value,
             $this->expires,
             $this->path,
             $this->domain,
@@ -55,12 +53,11 @@ class Cookie
     /**
      * Get cookie
      * 
-     * @param ?string $name
      * @return string
      */
-    public function get(?string $name = null): string
+    public function get(): string
     {
-        return $_COOKIE[$name ?: $this->name];
+        return $_COOKIE[$this->name];
     }
 
     /**
@@ -81,17 +78,87 @@ class Cookie
                 $this->httpOnly
             );
         }
+        
     }
 
     /**
      * Check if cookie exists
      * 
-     * @param ?string $name
      * @return bool
      */
-    public function exists(?string $name = null): bool
+    public function exists(): bool
     {
-        return isset($_COOKIE[$name ?: $this->name]);
+        return isset($_COOKIE[$this->name]);
+    }
+
+    /**
+     * Get cookie name
+     * 
+     * @return string
+     */
+    public function getName(): string
+    {
+        return $this->name;
+    }
+
+    /**
+     * Get cookie value
+     * 
+     * @return string
+     */
+    public function getValue(): string
+    {
+        return $this->value;
+    }
+
+    /**
+     * Get cookie expires
+     * 
+     * @return int
+     */
+    public function getExpires(): int
+    {
+        return $this->expires;
+    }
+
+    /**
+     * Get cookie path
+     * 
+     * @return string
+     */
+    public function getPath(): string
+    {
+        return $this->path;
+    }
+
+    /**
+     * Get cookie domain
+     * 
+     * @return string
+     */
+    public function getDomain(): string
+    {
+        return $this->domain;
+    }
+
+    /**
+     * Get cookie secure
+     * 
+     * @return bool
+     */
+    public function getSecure(): bool
+    {
+        return $this->secure;
+    }
+
+    /**
+     * Get cookie httpOnly
+     * 
+     * @return bool
+     */
+    public function getHttpOnly(): bool
+    {
+        return $this->httpOnly;
     }
 
     /**
@@ -124,27 +191,33 @@ class Cookie
         return array_values($_COOKIE);
     }
 
-    public function __get($name)
+    /**
+     * Get all cookies
+     * 
+     * @return array
+     */
+    public function allEntries(): array
     {
-        return match ($name) {
-            $this->name => $this->value,
-            'expires' => $this->expires,
-            'path' => $this->path,
-            'domain' => $this->domain,
-            'secure' => $this->secure,
-            'httpOnly' => $this->httpOnly
-        };
+        return array_map(fn($key, $value) => [$key => $value], array_keys($_COOKIE), array_values($_COOKIE));
     }
 
-    public function __set($name, $value)
+    /**
+     * Get all cookies
+     * 
+     * @return array
+     */
+    public function allEntriesKeys(): array
     {
-        match ($name) {
-            $this->name => $this->value = $value,
-            'expires' => $this->expires = $value,
-            'path' => $this->path = $value,
-            'domain' => $this->domain = $value,
-            'secure' => $this->secure = $value,
-            'httpOnly' => $this->httpOnly = $value
-        };
+        return array_map(fn($key, $value) => $key, array_keys($_COOKIE), array_values($_COOKIE));
+    }
+
+    /**
+     * Get all cookies
+     * 
+     * @return array
+     */
+    public function allEntriesValues(): array
+    {
+        return array_map(fn($key, $value) => $value, array_keys($_COOKIE), array_values($_COOKIE));
     }
 }
