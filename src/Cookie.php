@@ -56,14 +56,11 @@ class Cookie
      * Get cookie
      * 
      * @param ?string $name
-     * @return string
+     * @return ?string
      */
     public function get(?string $name = null): ?string
     {
-        $name = $name ?: $this->name;
-        
-        if ( array_key_exists($name, $_COOKIE) ) return $_COOKIE[$name];
-        return null;
+        return @ $_COOKIE[$name ?: $this->name];
     }
 
     /**
